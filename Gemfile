@@ -1,0 +1,6 @@
+#source 'https://gems.ruby-china.org'
+source 'https://rubygems.org'
+gem 'net'
+gem 'pry'
+gem 'OptionParser', '~> 0.5.1'
+gem 'net-ssh'
