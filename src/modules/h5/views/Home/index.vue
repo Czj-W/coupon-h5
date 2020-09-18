@@ -1,13 +1,13 @@
 <template>
   <div class="detail-test" :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'pt':''">
+    <div class="act-rule" @click="isShowRule=true">活动规则</div>
     <router-link :to="{path:'/history'}" class="record">领取记录</router-link>
     <div class="con" :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'con2':''">
       <div
         class="coupon-info"
         :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'coupon-info-success':''"
       >
-        <div class="price">
-          <span v-if="couponList.ticketType===0||couponList.ticketType===4">¥</span>{{couponList.amount}}<span v-if="couponList.ticketType===1">%</span>
+        <div class="price"><span v-if="couponList.ticketType===0||couponList.ticketType===4">¥</span>{{couponList.amount}}<span v-if="couponList.ticketType===1">%</span>
         </div>
         <div class="name">机票满减券</div>
       </div>
@@ -15,8 +15,7 @@
         class="coupon-info coupon-info2"
         :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'coupon-info-success2':''"
       >
-        <div class="price">
-          <span v-if="couponList.ticketType===0||couponList.ticketType===4">¥</span>{{couponList.amount}}<span v-if="couponList.ticketType===1">%</span>
+        <div class="price"><span v-if="couponList.ticketType===0||couponList.ticketType===4">¥</span>{{couponList.amount}}<span v-if="couponList.ticketType===1">%</span>
         </div>
         <div class="name">机票满减券</div>
       </div>
@@ -32,7 +31,7 @@
     <div
       class="btn rujia-receive"
       v-if="couponList.upperStatus&&!couponList.receive&&couponList.remainStatus"
-      @click="isShowName=true"
+      @click="getCouponClick"
     ></div>
     <router-link
       :to="{path:'/history'}"
@@ -42,17 +41,36 @@
     <div class="btn rujia-gradAll" v-if="couponList.upperStatus&&!couponList.remainStatus"></div>
     <div class="btn rujia-Offshelf" v-if="!couponList.upperStatus"></div>
     <div class="btn rujia-expired" v-if="couponList.isBefore"></div>
+
     <div class="rule">
-      <div class="title">活动规则</div>
-      <div class="time">
+      <div class="title">使用指南</div>
+      <div class="step">step 1 打开小程序</div>
+      <pre class="step-con">
+1.长按微信小程序码保存图片
+2.打开微信扫码，进入深航服务小程序
+3.注册并登录小程序账号
+4.点击我的-优惠券，可直接查看使用
+      </pre>
+      <div class="code-img" @click="saveImg">
+        <img src="https://img-gewu.jifenone.com/images/rujia-shenhan.jpg" alt />
+      </div>
+      <div class="step">step 2 优惠券兑换</div>
+      <pre class="step-con">
+1.复制兑换码
+2.打开深航服务小程序优惠券中兑换码输入入口
+3.输入兑换码，兑换优惠券
+4.兑换成功后，在深航服务小程序中可使用优惠券
+      </pre>
+      <!-- <div class="time">
         <div class="num">1</div>
         有效期：{{couponList.startTime}}~{{couponList.endTime}}
       </div>
       <div class="rule-txt">
         <div class="num">2</div>规则：
       </div>
-      <pre class="txt">{{couponList.useCondition}}</pre>
+      <pre class="txt">{{couponList.useCondition}}</pre>-->
     </div>
+
     <div class="mask" @click="isShowMsg=false" v-if="isShowMsg">
       <div class="mask-box">
         <div class="icon"></div>
@@ -72,6 +90,20 @@
         <div class="close" @click="isShowName=false"></div>
       </div>
     </div>
+    <div class="mask-rule" v-if="isShowRule">
+      <div class="mask-rule-con">
+        <div class="title">活动规则</div>
+        <div class="time">
+          <div class="num">1</div>
+          有效期：{{couponList.startTime}}~{{couponList.endTime}}
+        </div>
+        <div class="rule-txt">
+          <div class="num">2</div>规则：
+        </div>
+        <pre class="txt">{{couponList.useCondition}}</pre>
+        <div class="close" @click="isShowRule=false"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -88,10 +120,11 @@
         couponList: "",
         isSuccess: false,
         isShowMsg: false,
-        isShowName:false,
+        isShowName: false,
+        isShowRule: false,
         receivedList: [],
         erromsg: "",
-        userName:''
+        userName: "",
       };
     },
     created() {
@@ -100,12 +133,12 @@
     },
     mounted() {},
     methods: {
-      submit(){
-        if(this.userName===''){
+      submit() {
+        if (this.userName === "") {
           Toast.fail("请输入姓名");
-          return false
+          return false;
         }
-        this.getCouponClick()
+        this.getCouponClick();
       },
       copy(e) {
         this.$copyText(e)
@@ -123,12 +156,12 @@
         getDetail().then((res) => {
           if (res.data.code === 0) {
             let data = res.data.data.list[0];
-            console.log(data,123);
+            console.log(data, 123);
             data.startTime = moment(data.startTime).format("YYYY/MM/DD");
             data.endTime = moment(data.endTime).format("YYYY/MM/DD");
             data.isBefore = moment().isAfter(data.endTime);
             this.couponList = data;
-            console.log(this.couponList,456);
+            console.log(this.couponList, 456);
             if (
               (this.couponList.upperStatus && this.couponList.receive) ||
               this.isSuccess
@@ -139,9 +172,9 @@
         });
       },
       getCouponClick() {
-        this.isShowName =false
+        this.isShowName = false;
         // adPointContractId: store.state.adPointContractId,
-        getCoupon({userName:this.userName}).then((res) => {
+        getCoupon().then((res) => {
           if (res.data.code === 0) {
             let data = res.data.data;
             let successList = data.filter((item) => item.isSuccess);
@@ -161,8 +194,25 @@
           }
         });
       },
+    saveImg () {
+      let that = this
+      this.timeOutEvent = setTimeout(function () {
+        that.savePicture('https://img-gewu.jifenone.com/images/rujia-shenhan.jpg')
+      }, 500)
+    },
+    savePicture (Url) {
+      let blob = new Blob([''], {type: 'application/octet-stream'})
+      let url = URL.createObjectURL(blob)
+      let a = document.createElement('a')
+      a.href = Url
+      a.download = Url.replace(/(.*\/)*([^.]+.*)/ig, '$2').split('?')[0]
+      let e = document.createEvent('MouseEvents')
+      e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+      a.dispatchEvent(e)
+      URL.revokeObjectURL(url)
+    },
       getHistory() {
-        getHistoryList({ status: 0 }).then((res) => {
+        getHistoryList().then((res) => {
           if (res.data.code === 0) {
             let list = res.data.data.list;
             list.forEach((v) => {
@@ -205,8 +255,8 @@
   }
   .detail-test {
     width: 10rem;
-    height: 21.653333rem;
-    background: url("https://img-gewu.jifenone.com/images/rujia-bgss.png");
+    height: 25.253333rem;
+    background: url("https://img-gewu.jifenone.com/images/coupon-h5-rujia.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     padding-top: 6.053333rem;
@@ -218,7 +268,23 @@
       background-image: url("https://img-gewu.jifenone.com/images/rujia-record.png");
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      top: 1.733333rem;
+      top: 2.133333rem;
+      left: 0;
+      font-size: 0.293333rem;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 0.8rem;
+      text-align: center;
+    }
+    .act-rule {
+      position: absolute;
+      width: 1.6rem;
+      height: 0.8rem;
+      background-image: url("https://img-gewu.jifenone.com/images/coupon-h5-rule-bg.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      top: 0.933333rem;
       left: 0;
       font-size: 0.293333rem;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -357,11 +423,11 @@
     }
     .rule {
       width: 8.56rem;
-      height: 6.56rem;
+      height: 10.133333rem;
       margin: 0 auto;
-      padding-top: 0.146667rem;
+      padding-top: 0.133333rem;
       box-sizing: border-box;
-      background-image: url("https://img-gewu.jifenone.com/images/rujia-rules.png");
+      background-image: url("https://img-gewu.jifenone.com/images/coupon-h5-guide.png");
       background-size: 100% 100%;
       background-repeat: no-repeat;
       .title {
@@ -374,50 +440,48 @@
         line-height: 0.453333rem;
         letter-spacing: 0.053333rem;
         text-align: center;
-        margin-bottom: 0.386667rem;
+        margin-bottom: 0.426667rem;
       }
-      .time,
-      .rule-txt {
+      .step {
         width: 100%;
-        padding-left: 0.373333rem;
-        box-sizing: border-box;
-        height: 0.48rem;
+        padding-left: 0.213333rem;
+        height: 0.426667rem;
         font-size: 0.32rem;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #395ec8;
-        line-height: 0.48rem;
-        display: flex;
-        margin-bottom: 0.28rem;
-        .num {
-          height: 0.48rem;
-          font-size: 0.32rem;
-          font-family: PingFangSC-Medium, PingFang SC;
-          font-weight: 500;
-          color: #ffffff;
-          height: 0.48rem;
-          width: 0.146667rem;
-          margin-right: 0.413333rem;
-        }
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #ffffff;
+        line-height: 0.426667rem;
+        margin-bottom: 0.266667rem;
       }
-      .rule-txt {
-        margin-bottom: 0.066667rem;
-      }
-      .txt {
-        width: 7.16rem;
-        height: 3.5rem;
-        margin-left: 0.933333rem;
+      .step-con {
+        width: 7.493333rem;
+        height: 2.133333rem;
         font-size: 0.32rem;
         font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
         color: #395ec8;
         line-height: 0.533333rem;
-        word-break: break-word;
-        overflow-y: auto;
+        margin-left: 0.533333rem;
+        margin-bottom: 0.186667rem;
+      }
+      .code-img {
+        width: 2.453333rem;
+        height: 2.453333rem;
+        background: #ffffff;
+        border-radius: 0.133333rem;
+        border: 0.013333rem solid #5e94fd;
+        overflow: hidden;
+        margin: 0 auto;
+        margin-bottom: 0.213333rem;
+        > img {
+          width: 2.453333rem;
+          height: 2.453333rem;
+        }
       }
     }
     .mask,
-    .mask-form {
+    .mask-form,
+    .mask-rule {
       position: fixed;
       top: 0;
       right: 0;
@@ -532,10 +596,83 @@
           font-size: 0.426667rem;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
-          color: #3B72F2;
+          color: #3b72f2;
           letter-spacing: 0.04rem;
         }
-        .close{
+        .close {
+          position: absolute;
+          bottom: -1.386667rem;
+          left: 3.706667rem;
+          width: 0.72rem;
+          height: 0.72rem;
+          background-image: url("https://img-gewu.jifenone.com/images/rujia-his-close.png");
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+        }
+      }
+    }
+    .mask-rule {
+      background: rgba(0, 0, 0, 0.4);
+      .mask-rule-con {
+        position: absolute;
+        width: 8.133333rem;
+        height: 7.52rem;
+        top: 5.733333rem;
+        left: 0.933333rem;
+        background-image: url("https://img-gewu.jifenone.com/images/rujia-mask-rule.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        padding-top: 0.266667rem;
+        box-sizing: border-box;
+        .title {
+          width: 100%;
+          height: 0.426667rem;
+          font-size: 0.373333rem;
+          font-family: PingFangSC-Medium, PingFang SC;
+          font-weight: 500;
+          color: #ffffff;
+          line-height: 0.426667rem;
+          letter-spacing: 0.053333rem;
+          text-align: center;
+          margin-bottom: 0.933333rem;
+        }
+        .time,
+        .rule-txt {
+          width: 100%;
+          padding-left: 0.16rem;
+          display: flex;
+          align-items: center;
+          box-sizing: border-box;
+          height: 0.48rem;
+          font-size: 0.32rem;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #395ec8;
+          line-height: 0.48rem;
+          margin-bottom: 0.4rem;
+          .num {
+            width: 0.146667rem;
+            height: 0.426667rem;
+            font-size: 0.32rem;
+            font-family: PingFangSC-Medium, PingFang SC;
+            font-weight: 500;
+            color: #ffffff;
+            line-height: 0.426667rem;
+            margin-right: 0.386667rem;
+          }
+        }
+        .txt {
+          width: 7.173333rem;
+          height: 3.733333rem;
+          font-size: 0.32rem;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #395ec8;
+          line-height: 0.533333rem;
+          margin-left: 0.693333rem;
+          overflow-y: auto;
+        }
+        .close {
           position: absolute;
           bottom: -1.386667rem;
           left: 3.706667rem;
@@ -559,13 +696,12 @@
     *word-wrap: break-word;
     *white-space: normal;
   }
-input{  
-	background:none;  
-	outline:none;  
-	border:none;
-}
-input:focus{   
-	border:none;
-}
-
+  input {
+    background: none;
+    outline: none;
+    border: none;
+  }
+  input:focus {
+    border: none;
+  }
 </style>

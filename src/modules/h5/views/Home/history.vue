@@ -66,10 +66,7 @@
           <div class="close" @click.stop="closeMask"></div>
         </div>
         <div class="mask-box-coupon">
-          <div class="num">
-            <span v-if="couponInfo.ticketType===0||couponInfo.ticketType===4">¥</span>
-            {{couponInfo.amount}}
-            <span v-if="couponInfo.ticketType===1">%</span>
+          <div class="num"><span v-if="couponInfo.ticketType===0||couponInfo.ticketType===4">¥</span>{{couponInfo.amount}}<span v-if="couponInfo.ticketType===1">%</span>
           </div>
           <div class="txt">{{couponInfo.title}}</div>
         </div>
