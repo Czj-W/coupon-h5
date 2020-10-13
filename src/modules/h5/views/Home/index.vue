@@ -1,46 +1,143 @@
 <template>
-  <div class="detail-test" :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'pt':''">
-    <div class="act-rule" @click="isShowRule=true">活动规则</div>
-    <router-link :to="{path:'/history'}" class="record">领取记录</router-link>
-    <div class="con" :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'con2':''">
+  <div
+    class="detail-test"
+    :class="
+      (couponList.upperStatus && couponList.receive) || isSuccess ? 'pt' : ''
+    "
+  >
+    <div class="act-rule" @click="isShowRule = true">活动规则</div>
+    <router-link :to="{ path: '/history' }" class="record"
+      >领取记录</router-link
+    >
+    <div
+      class="con"
+      :class="
+        (couponList.upperStatus && couponList.receive) || isSuccess
+          ? 'con2'
+          : ''
+      "
+    >
       <div
         class="coupon-info"
-        :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'coupon-info-success':''"
+        :class="
+          (couponList.upperStatus && couponList.receive) || isSuccess
+            ? 'coupon-info-success'
+            : ''
+        "
       >
-        <div class="price"><span v-if="couponList.ticketType===0||couponList.ticketType===4">¥</span>{{couponList.amount}}<span v-if="couponList.ticketType===1">%</span>
+        <div class="price">
+          <span
+            v-if="couponList.ticketType === 0 || couponList.ticketType === 4"
+            >¥</span
+          >{{ couponList.amount
+          }}<span v-if="couponList.ticketType === 1">%</span>
         </div>
         <div class="name">机票满减券</div>
       </div>
       <div
         class="coupon-info coupon-info2"
-        :class="(couponList.upperStatus&&couponList.receive)||isSuccess?'coupon-info-success2':''"
+        :class="
+          (couponList.upperStatus && couponList.receive) || isSuccess
+            ? 'coupon-info-success2'
+            : ''
+        "
       >
-        <div class="price"><span v-if="couponList.ticketType===0||couponList.ticketType===4">¥</span>{{couponList.amount}}<span v-if="couponList.ticketType===1">%</span>
+        <div class="price">
+          <span
+            v-if="couponList.ticketType === 0 || couponList.ticketType === 4"
+            >¥</span
+          >{{ couponList.amount
+          }}<span v-if="couponList.ticketType === 1">%</span>
         </div>
         <div class="name">机票满减券</div>
       </div>
-      <div class="item" v-if="(couponList.upperStatus&&couponList.receive)||isSuccess">
-        <div class="code">兑换码：{{receivedList[0].ticketInfoVO.code}}</div>
-        <div class="copy" @click.stop="copy(receivedList[0].ticketInfoVO.code)"></div>
+      <div
+        class="item"
+        v-if="(couponList.upperStatus && couponList.receive) || isSuccess"
+      >
+        <div class="code">兑换码：{{ receivedList[0].code }}</div>
+        <div class="copy" @click.stop="copy(receivedList[0].code)"></div>
       </div>
-      <div class="item item2" v-if="(couponList.upperStatus&&couponList.receive)||isSuccess">
-        <div class="code">兑换码：{{receivedList[1].ticketInfoVO.code}}</div>
-        <div class="copy" @click.stop="copy(receivedList[1].ticketInfoVO.code)"></div>
+      <div
+        class="item item2"
+        v-if="(couponList.upperStatus && couponList.receive) || isSuccess"
+      >
+        <div class="code">兑换码：{{ receivedList[1].code }}</div>
+        <div class="copy" @click.stop="copy(receivedList[1].code)"></div>
       </div>
     </div>
     <div
+      class="userInfo"
+      v-if="
+        couponList.upperStatus &&
+        !couponList.receive &&
+        couponList.remainStatus &&
+        isCheck &&
+        isConfirm
+      "
+    >
+      <div class="hd">
+        <div class="dian"></div>
+        <div class="txt">
+          您将领取至该账户，在深航服务小程序兑换时需与领取账户保持一致，方可兑换成功，请确认信息
+        </div>
+      </div>
+      <div class="item">{{ urlInfo.name }}</div>
+      <div class="item">{{ urlInfo.phoneNumber }}</div>
+    </div>
+    <div
       class="btn rujia-receive"
-      v-if="couponList.upperStatus&&!couponList.receive&&couponList.remainStatus"
-      @click="getCouponClick"
+      v-if="
+        couponList.upperStatus &&
+        !couponList.receive &&
+        couponList.remainStatus &&
+        isCheck &&
+        !isConfirm
+      "
+      @click="handleConfirm"
     ></div>
+    <div
+      class="btn rujia-noreceive"
+      v-if="
+        couponList.upperStatus &&
+        !couponList.receive &&
+        couponList.remainStatus &&
+        !isCheck
+      "
+      @click="showPrompt"
+    >
+      立即领取
+    </div>
+    <div
+      class="btn rujia-confirm"
+      v-if="
+        couponList.upperStatus &&
+        !couponList.receive &&
+        couponList.remainStatus &&
+        isCheck &&
+        isConfirm
+      "
+      @click="getCouponClick"
+    >
+      确认领取
+    </div>
     <router-link
-      :to="{path:'/history'}"
+      :to="{ path: '/history' }"
       class="btn rujia-use"
-      v-if="(couponList.upperStatus&&couponList.receive)||isSuccess"
+      v-if="(couponList.upperStatus && couponList.receive) || isSuccess"
     ></router-link>
-    <div class="btn rujia-gradAll" v-if="couponList.upperStatus&&!couponList.remainStatus"></div>
+    <div
+      class="btn rujia-gradAll"
+      v-if="couponList.upperStatus && !couponList.remainStatus"
+    ></div>
     <div class="btn rujia-Offshelf" v-if="!couponList.upperStatus"></div>
     <div class="btn rujia-expired" v-if="couponList.isBefore"></div>
+
+    <div class="protocol" @click="handleRead">
+      <div class="icon" :class="isCheck ? 'icon-actived' : ''"></div>
+      <div class="txt">您已阅读并同意</div>
+      <div class="jump">《用户信息授权协议》</div>
+    </div>
 
     <div class="rule">
       <div class="title">使用指南</div>
@@ -71,10 +168,10 @@
       <pre class="txt">{{couponList.useCondition}}</pre>-->
     </div>
 
-    <div class="mask" @click="isShowMsg=false" v-if="isShowMsg">
+    <div class="mask" @click="isShowMsg = false" v-if="isShowMsg">
       <div class="mask-box">
         <div class="icon"></div>
-        <div class="txt" v-if="erromsg">{{erromsg}}</div>
+        <div class="txt" v-if="erromsg">{{ erromsg }}</div>
         <div class="msg">来晚一步，优惠券被抢光啦！</div>
         <div class="btn"></div>
       </div>
@@ -85,9 +182,11 @@
         <div class="mask-input">
           <input type="text" placeholder="请输入姓名" v-model="userName" />
         </div>
-        <div class="mask-msg">请填写与深航注册账户一致的姓名，否则可能导致领取失败</div>
+        <div class="mask-msg">
+          请填写与深航注册账户一致的姓名，否则可能导致领取失败
+        </div>
         <div class="btn" @click="submit">确定</div>
-        <div class="close" @click="isShowName=false"></div>
+        <div class="close" @click="isShowName = false"></div>
       </div>
     </div>
     <div class="mask-rule" v-if="isShowRule">
@@ -95,13 +194,14 @@
         <div class="title">活动规则</div>
         <div class="time">
           <div class="num">1</div>
-          有效期：{{couponList.startTime}}~{{couponList.endTime}}
+          有效期：{{ couponList.startTime }}~{{ couponList.endTime }}
         </div>
         <div class="rule-txt">
-          <div class="num">2</div>规则：
+          <div class="num">2</div>
+          规则：
         </div>
-        <pre class="txt">{{couponList.useCondition}}</pre>
-        <div class="close" @click="isShowRule=false"></div>
+        <pre class="txt">{{ couponList.useCondition }}</pre>
+        <div class="close" @click="isShowRule = false"></div>
       </div>
     </div>
   </div>
@@ -122,14 +222,17 @@
         isShowMsg: false,
         isShowName: false,
         isShowRule: false,
+        isCheck: true,
+        isConfirm: false,
         receivedList: [],
         erromsg: "",
         userName: "",
+        urlInfo: {},
       };
     },
     created() {
       this.isShowMsg = false;
-      this.getParams();
+      this.getQueryString();
     },
     mounted() {},
     methods: {
@@ -151,6 +254,12 @@
             console.log(err);
           });
       },
+      showPrompt() {
+        Toast.fail("请勾选");
+      },
+      handleConfirm() {
+        this.isConfirm = true;
+      },
       getList() {
         // adPointContractId: store.state.adPointContractId,
         getDetail().then((res) => {
@@ -170,6 +279,9 @@
             }
           }
         });
+      },
+      handleRead() {
+        this.isCheck = !this.isCheck;
       },
       getCouponClick() {
         this.isShowName = false;
@@ -194,54 +306,73 @@
           }
         });
       },
-    saveImg () {
-      let that = this
-      this.timeOutEvent = setTimeout(function () {
-        that.savePicture('https://img-gewu.jifenone.com/images/rujia-shenhan.jpg')
-      }, 500)
-    },
-    savePicture (Url) {
-      let blob = new Blob([''], {type: 'application/octet-stream'})
-      let url = URL.createObjectURL(blob)
-      let a = document.createElement('a')
-      a.href = Url
-      a.download = Url.replace(/(.*\/)*([^.]+.*)/ig, '$2').split('?')[0]
-      let e = document.createEvent('MouseEvents')
-      e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-      a.dispatchEvent(e)
-      URL.revokeObjectURL(url)
-    },
+      saveImg() {
+        let that = this;
+        this.timeOutEvent = setTimeout(function () {
+          that.savePicture(
+            "https://img-gewu.jifenone.com/images/rujia-shenhan.jpg"
+          );
+        }, 500);
+      },
+      savePicture(Url) {
+        let blob = new Blob([""], { type: "application/octet-stream" });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = Url;
+        a.download = Url.replace(/(.*\/)*([^.]+.*)/gi, "$2").split("?")[0];
+        let e = document.createEvent("MouseEvents");
+        e.initMouseEvent(
+          "click",
+          true,
+          false,
+          window,
+          0,
+          0,
+          0,
+          0,
+          0,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        a.dispatchEvent(e);
+        URL.revokeObjectURL(url);
+      },
       getHistory() {
         getHistoryList().then((res) => {
           if (res.data.code === 0) {
             let list = res.data.data.list;
             list.forEach((v) => {
+              console.log(v, 123);
               v.startTime = moment(v.startTime).format("YYYY/MM/DD");
               v.endTime = moment(v.endTime).format("YYYY/MM/DD");
-              v.ticketInfoVO = v;
+              // v = v;
             });
             this.receivedList = list;
           }
         });
       },
-      getParams() {
-        let url = window.location.href; // 获取当前url
-        let cs = url.split("?")[1]; // 获取?之后的参数字符串
-        if (cs === "") return false;
-        let csArr = cs.split("#"); // 参数字符串分割为数组
-        let ss = {};
-        csArr.forEach((v, i) => {
-          ss[csArr[i].split("=")[0]] = csArr[i].split("=")[1];
-        });
-        // csArr.forEach((v, i) => {
-        //   ss[csArr[i].split('=')[0]] = csArr[i].split('=')[1]
-        // })
-        // ss.adPointContractId = ss.adPointContractId.split('#')[0]
-        console.log(ss, 123);
-        if (ss.token) {
-          store.commit("setToken", ss.token);
-          // store.commit('setID', ss.adPointContractId)
+      getQueryString() {
+        let result = location.search.match(new RegExp("[?&][^?&]+=[^?&]+", "g"));
+        if (result == null) {
+          return "";
         }
+        for (let i = 0; i < result.length; i++) {
+          result[i] = result[i].substring(1);
+        }
+        let newRes = {};
+        result.forEach((v, i) => {
+          newRes[v.split("=")[0]] = v.split("=")[1];
+        });
+        if (newRes.token) {
+          store.commit("setToken", newRes.token);
+        }
+        newRes.name = decodeURI(newRes.name);
+        this.urlInfo = newRes;
+        console.log(newRes,123);
         this.getList();
       },
     },
@@ -255,7 +386,6 @@
   }
   .detail-test {
     width: 10rem;
-    height: 25.253333rem;
     background: url("https://img-gewu.jifenone.com/images/coupon-h5-rujia.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -388,15 +518,91 @@
       background-size: 100% 100%;
       background-repeat: no-repeat;
     }
+    .userInfo {
+      width: 8.4rem;
+      height: 3.76rem;
+      background: linear-gradient(136deg, #dfeeff 0%, #dfedff 100%);
+      box-shadow: 0px 0.08rem 0.08rem 0px #4dadff,
+        0.013333rem 0.013333rem 0.04rem 0px #f6fbff;
+      border-radius: 0.133333rem;
+      margin: 0 auto;
+      margin-bottom: 0.4rem;
+      padding: 0 0.186667rem;
+      padding-top: 0.4rem;
+      box-sizing: border-box;
+      .hd {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.32rem;
+        .dian {
+          width: 0.133333rem;
+          height: 0.133333rem;
+          background: #096aef;
+          border-radius: 50%;
+          margin-right: 0.133333rem;
+        }
+        .txt {
+          height: 0.906667rem;
+          font-size: 0.293333rem;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #395ec8;
+          line-height: 0.453333rem;
+        }
+      }
+      .item {
+        width: 4.826667rem;
+        padding: 0 0.306667rem;
+        box-sizing: border-box;
+        height: 0.8rem;
+        background: #c8deff;
+        border-radius: 0.08rem;
+        font-size: 0.293333rem;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #618fd5;
+        line-height: 0.8rem;
+        margin: 0 auto;
+        margin-bottom: 0.266667rem;
+        overflow: hidden;
+      }
+    }
     .btn {
       width: 7.066667rem;
       height: 1.333333rem;
       margin: 0 auto;
-      margin-bottom: 0.373333rem;
+      margin-bottom: 0.306667rem;
       display: block;
     }
     .rujia-receive {
       background: url("https://img-gewu.jifenone.com/images/rujia-receive.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    .rujia-confirm {
+      background: url("https://img-gewu.jifenone.com/images/rujia-confirmBtn.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      height: 1.333333rem;
+      font-size: 0.426667rem;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: #ffffff;
+      line-height: 1.333333rem;
+      letter-spacing: 0.066667rem;
+      text-align: center;
+    }
+    .rujia-noreceive {
+      height: 1.333333rem;
+      font-size: 0.426667rem;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: #ffffff;
+      line-height: 1.333333rem;
+      letter-spacing: 0.066667rem;
+      text-align: center;
+      background: url("https://img-gewu.jifenone.com/images/rujia-use-active.png");
       background-size: 100% 100%;
       background-repeat: no-repeat;
     }
@@ -420,6 +626,40 @@
       background: url("https://img-gewu.jifenone.com/images/rujia-Offshelf.png");
       background-size: 100% 100%;
       background-repeat: no-repeat;
+    }
+    .protocol {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.546667rem;
+      .icon {
+        width: 0.373333rem;
+        height: 0.373333rem;
+        margin-right: 0.133333rem;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-image: url("https://img-gewu.jifenone.com/images/rujia-active.png");
+      }
+      .icon-actived {
+        background-image: url("https://img-gewu.jifenone.com/images/rujia-actived.png");
+      }
+      .txt {
+        height: 0.4rem;
+        font-size: 0.293333rem;
+        font-weight: 400;
+        color: #395ec8;
+        line-height: 0.4rem;
+        margin-right: 0.08rem;
+      }
+      .jump {
+        height: 0.4rem;
+        font-size: 0.293333rem;
+        font-weight: 400;
+        color: #395ec8;
+        line-height: 0.4rem;
+        text-decoration: underline;
+      }
     }
     .rule {
       width: 8.56rem;

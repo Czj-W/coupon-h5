@@ -84,7 +84,8 @@ class Fetch {
   }
 }
 
-let couponApi = 'https://bus-api.lianjifen.com/yunjiafen'
+// let couponApi = 'https://bus-api.lianjifen.com/yunjiafen' //正式环境
+let couponApi = 'http://staging-bus-api.lianjifen.com/yunjiafen' //测试环境
 // if (process.env.NODE_ENV !== 'production') {
 //   hotelsApi = 'https://staging-hotel.lianjifen.com'
 //   pointsApi = 'https://staging-rjapp.lianjifen.com'
