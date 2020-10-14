@@ -136,7 +136,7 @@
     <div class="protocol" @click="handleRead">
       <div class="icon" :class="isCheck ? 'icon-actived' : ''"></div>
       <div class="txt">您已阅读并同意</div>
-      <div class="jump">《用户信息授权协议》</div>
+      <div class="jump" @click.stop="isShowProtocol=true">《用户信息授权协议》</div>
     </div>
 
     <div class="rule">
@@ -172,7 +172,11 @@
       <div class="mask-box">
         <div class="icon"></div>
         <div class="txt" v-if="erromsg">{{ erromsg }}</div>
-        <div class="msg">来晚一步，优惠券被抢光啦！</div>
+        <pre class="msgPre" v-if="erroCode === 80155">
+参与资格要求：
+1. 如家白金卡以上且最近3个月有消费记录会员
+2. 活动期间内有消费记录钻石卡以上会员。
+        </pre>
         <div class="btn"></div>
       </div>
     </div>
@@ -204,6 +208,53 @@
         <div class="close" @click="isShowRule = false"></div>
       </div>
     </div>
+    <div class="mask-protocol" v-if="isShowProtocol">
+      <div class="mask-protocol-con">
+        <pre class="protocol">
+用户信息授权协议
+
+用户信息授权协议（以下简称“本协议”）是首旅如家（以下简称“我们”）与用户（以下简称“您”）就个人信息授权使用所订立的合约。您通过网络页面点击确认，即表示您同意接受本协议的全部约定内容以及与本协议有关的已经发布或将来可能发布的各项规则、页面展示、操作流程、公告或通知（以下统称“规则 ” ）。本协议适用于首旅如家平台当前活动的相关服务。
+在接受本协议之前，请您仔细阅读本协议的全部内容（特别是以粗体或下划线标注的内容）。如果您不同意本协议的任意内容，或者无法准确理解该条款的含义，请不要进行任何操作。
+
+一、用户信息获取范围
+我们需要获取的用户信息类型包括:
+1、账户信息（首旅如家会员账号、会员等级、姓名、手机号）；
+
+二、用户信息获取方式
+我们可能会就下列各种情况，获得您的用户信息：
+1、您在访问或使用本网站服务时提供的信息；
+2、从其他来源获取的信息：如您参加我们或我们与合作伙伴组织的任何活动。
+
+三、用户信息的使用
+我们可能会利用我们获取的用户信息：
+1、向您提供我们认为您可能会感兴趣的产品、服务或营销活动；
+2、就您的要求向您提供咨询服务，或向您做出回应或与您沟通；
+3、领取当前活动优惠券时进行唯一身份识别，标记优惠券领取情况（使用姓名+手机号通过加密算法进行加密，获得唯一身份标识）；
+4、为提升我们的服务，联系您进行调研、回访；
+5、进行数据分析（如，活动效果分析）；
+6、经营、评估和完善我们的业务（包括开发新产品和服务；管理我们的通信；判断我们的销售、营销和广告效果；分析和强化我们的产品、服务和网站）；
+7、防止各种违法或犯罪活动和其他法律责任；
+
+四、用户信息的共享、披露
+用户的信息是我们业务的重要组成部分，我们不会出售或以其他方式共享您的个人信息，但本协议中已列明的如下情况除外。
+1、合作伙伴：
+我们可能会与我们的关联公司或合作伙伴（包括但不限于，您通过我们提供的联合登陆方式登陆的其它网站，以下统称“合作伙伴”）共享用户信息。您可以辨别您的使用或交易行为何时会涉及我们的合作伙伴，我们会与该合作伙伴分享与这些使用或交易行为有关的用户信息。
+2、第三方服务提供者：
+我们有可能聘请外部公司或个人代表我们提供某些产品或服务，包括但不限于提供金融产品信息，以及运营、维护、IT平台和/或技术服务、数据安全或备份服务、发送信函或电子邮件、分析数据、提供市场营销帮助、提供搜索结果和链接（包括付费搜索名单和链接）等用户服务。在该等情况下，我们可能会共享用户信息。
+3、征得您的同意：
+除以上规定及本协议已列明的情况外，当您的信息有可能披露给第三方时，您将会得到通知，并且您将有机会选择不与第三方共享此信息。
+4、在下列情况下，我们可能还会披露您的相关信息：
+根据法律、法规或法律程序（如，法院法令或传召出庭令）的规定；根据政府部门（如，行政机构、执法机构）的要求；为了保护本网站、我们的用户或其他人的权利及其财产或安全，或当我们认为对防止实际损害或财务损失，或调查可疑或实际非法活动来说，披露乃属必要或适当时。这也包括为防止欺诈等违法活动和减少信用风险而与其他公司和组织交换信息。
+
+五、您同意本协议中的授权不可撤回或撤销。
+六、在中国法律允许的范围内，我们可能会不时更新本协议，恕不提前通知。我们将在本平台上醒目位置发布公告，告知您本协议的任何重大变动。
+七、除本协议约定外，首旅如家平台发布的《网络会员注册服务条款》、《首旅如家隐私政策》的相关约定对我们和您亦有同等约束力。
+八、您同意，因履行本协议发生纠纷的，提交上海市徐汇区人民法院诉讼解决。
+
+        </pre>
+      </div>
+      <div class="close" @click="isShowProtocol = false"></div>
+    </div>
   </div>
 </template>
 
@@ -224,8 +275,10 @@
         isShowRule: false,
         isCheck: true,
         isConfirm: false,
+        isShowProtocol: true,
         receivedList: [],
         erromsg: "",
+        erroCode: 0,
         userName: "",
         urlInfo: {},
       };
@@ -289,6 +342,7 @@
         getCoupon().then((res) => {
           if (res.data.code === 0) {
             let data = res.data.data;
+            let meta = res.data.meta;
             let successList = data.filter((item) => item.isSuccess);
             if (successList.length === 2) {
               Toast.success("领取成功");
@@ -300,6 +354,8 @@
               this.isShowMsg = true;
               this.isSuccess = false;
             } else if (successList.length === 0) {
+              this.erromsg = meta.message;
+              this.erroCode = +meta.code;
               this.isShowMsg = true;
               this.isSuccess = false;
             }
@@ -372,7 +428,7 @@
         }
         newRes.name = decodeURI(newRes.name);
         this.urlInfo = newRes;
-        console.log(newRes,123);
+        console.log(newRes, 123);
         this.getList();
       },
     },
@@ -721,7 +777,8 @@
     }
     .mask,
     .mask-form,
-    .mask-rule {
+    .mask-rule,
+    .mask-protocol {
       position: fixed;
       top: 0;
       right: 0;
@@ -758,16 +815,16 @@
           text-align: center;
           margin-bottom: 0.4rem;
         }
-        .msg {
-          width: 100%;
-          height: 0.373333rem;
+        .msgPre {
+          width: 6.746667rem;
+          height: 1.6rem;
           font-size: 0.32rem;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
-          color: #8f9194;
-          line-height: 0.373333rem;
-          margin-bottom: 1.92rem;
-          text-align: center;
+          color: #292a2b;
+          line-height: 0.533333rem;
+          margin: 0 auto;
+          margin-bottom: 1.333333rem;
         }
         .btn {
           width: 3.333333rem;
@@ -922,6 +979,40 @@
           background-size: 100% 100%;
           background-repeat: no-repeat;
         }
+      }
+    }
+    .mask-protocol {
+      background: rgba(0, 0, 0, 0.4);
+      .mask-protocol-con {
+        position: absolute;
+        width: 8.133333rem;
+        height: 7.52rem;
+        top: 5.733333rem;
+        left: 0.933333rem;
+        background: #ffffff;
+        border-radius: 0.266667rem;
+        padding: 0.266667rem;
+        box-sizing: border-box;
+        overflow-y: auto;
+        .protocol {
+          width: 100%;
+          font-size: 0.32rem;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #395ec8;
+          line-height: 0.533333rem;
+        }
+      }
+      .close {
+        position: absolute;
+        top: 5.733333rem+7.52rem+0.666667rem;
+        left: 50%;
+        margin-left: -0.36rem;
+        width: 0.72rem;
+        height: 0.72rem;
+        background-image: url("https://img-gewu.jifenone.com/images/rujia-his-close.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
       }
     }
   }
