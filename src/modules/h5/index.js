@@ -44,6 +44,11 @@ if (token) {
   store.commit('setUser', user)
   store.commit('setUserHash', userHash)
 }
+Vue.prototype.$uploadEvent = (event = '', params = {}) => {
+  if (window._hmt) {
+    window._hmt.push(['_trackEvent', event, Object.keys(params).join(',') || 'click', Object.values(params).join(',')])
+  }
+}
 
 store.commit('setUtm', {
   utm_source: query.utm_source,

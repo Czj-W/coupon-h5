@@ -67,6 +67,8 @@ class Fetch {
             store.commit('setShowLogin', true)
           } else if (response.data.code === 402) {
             store.commit('setToken', '')
+          } else if (response.data.code === 80155) {
+            console.log("不符合条件");
           } else {
             Toast(response.data.message)
           }
@@ -84,8 +86,8 @@ class Fetch {
   }
 }
 
-// let couponApi = 'https://bus-api.lianjifen.com/yunjiafen' //正式环境
-let couponApi = 'http://staging-bus-api.lianjifen.com/yunjiafen' //测试环境
+let couponApi = 'https://bus-api.lianjifen.com/yunjiafen' //正式环境
+// let couponApi = 'http://staging-bus-api.lianjifen.com/yunjiafen' //测试环境
 // if (process.env.NODE_ENV !== 'production') {
 //   hotelsApi = 'https://staging-hotel.lianjifen.com'
 //   pointsApi = 'https://staging-rjapp.lianjifen.com'

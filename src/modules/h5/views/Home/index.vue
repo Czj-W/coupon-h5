@@ -6,7 +6,7 @@
     "
   >
     <div class="act-rule" @click="isShowRule = true">活动规则</div>
-    <router-link :to="{ path: '/history' }" class="record"
+    <router-link :to="{ path: '/history' }" class="record" v-if="token!==''"
       >领取记录</router-link
     >
     <div
@@ -85,6 +85,16 @@
       <div class="item">{{ urlInfo.name }}</div>
       <div class="item">{{ urlInfo.phoneNumber }}</div>
     </div>
+
+    <!-- 去使用 （用户已领取）-->
+    <router-link
+      :to="{ path: '/history' }"
+      class="btn rujia-use"
+      v-if="couponList.receive || isSuccess"
+    ></router-link>
+     <!-- 去使用 （用户已领取）-->
+
+    <!-- (用户未领取) -->
     <div
       class="btn rujia-receive"
       v-if="
@@ -121,18 +131,20 @@
     >
       确认领取
     </div>
-    <router-link
-      :to="{ path: '/history' }"
-      class="btn rujia-use"
-      v-if="(couponList.upperStatus && couponList.receive) || isSuccess"
-    ></router-link>
+    <!-- 已抢光  remainStatus是否剩余 -->
     <div
       class="btn rujia-gradAll"
-      v-if="couponList.upperStatus && !couponList.remainStatus"
+      v-if="!couponList.remainStatus&&!couponList.receive"
+      @click="$uploadEvent('已抢光')"
     ></div>
-    <div class="btn rujia-Offshelf" v-if="!couponList.upperStatus"></div>
-    <div class="btn rujia-expired" v-if="couponList.isBefore"></div>
-
+    <!-- 已抢光 -->
+    <!--  已下架-->
+    <div class="btn rujia-Offshelf" v-else-if="!couponList.upperStatus&&!couponList.receive"></div>
+    <!--  已下架-->
+    <!-- 已过期 -->
+    <div class="btn rujia-expired" v-else-if="couponList.isBefore&&!couponList.receive"></div>
+    <!-- 已过期 -->
+    <!-- (用户未领取) -->
     <div class="protocol" @click="handleRead">
       <div class="icon" :class="isCheck ? 'icon-actived' : ''"></div>
       <div class="txt">您已阅读并同意</div>
@@ -275,12 +287,13 @@
         isShowRule: false,
         isCheck: true,
         isConfirm: false,
-        isShowProtocol: true,
+        isShowProtocol: false,
         receivedList: [],
         erromsg: "",
         erroCode: 0,
         userName: "",
         urlInfo: {},
+        token:'',
       };
     },
     created() {
@@ -312,6 +325,7 @@
       },
       handleConfirm() {
         this.isConfirm = true;
+        this.$uploadEvent('展示用户信息')
       },
       getList() {
         // adPointContractId: store.state.adPointContractId,
@@ -338,10 +352,11 @@
       },
       getCouponClick() {
         this.isShowName = false;
+        this.$uploadEvent('点击领取')
         // adPointContractId: store.state.adPointContractId,
         getCoupon().then((res) => {
-          if (res.data.code === 0) {
-            let data = res.data.data;
+          if (res.data.code === 0||res.data.meta.code === 80155) {
+            let data = res.data.data||[];
             let meta = res.data.meta;
             let successList = data.filter((item) => item.isSuccess);
             if (successList.length === 2) {
@@ -424,6 +439,7 @@
           newRes[v.split("=")[0]] = v.split("=")[1];
         });
         if (newRes.token) {
+          this.token =newRes.token
           store.commit("setToken", newRes.token);
         }
         newRes.name = decodeURI(newRes.name);
