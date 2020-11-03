@@ -18,7 +18,7 @@ const router = new Router({
         {
           path: '',
           component: () => import('../views/Home'),
-          meta: { title: '优惠券详情', nav: true }
+          meta: { title: '金秋十月，好礼相送', nav: true }
         },
         {
           path: '/history',

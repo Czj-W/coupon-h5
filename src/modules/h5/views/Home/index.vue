@@ -186,8 +186,7 @@
         <div class="txt" v-if="erromsg">{{ erromsg }}</div>
         <pre class="msgPre" v-if="erroCode === 80155">
 参与资格要求：
-1. 如家白金卡以上且最近3个月有消费记录会员
-2. 活动期间内有消费记录钻石卡以上会员。
+1. 仅限白金卡以上会员领取
         </pre>
         <div class="btn"></div>
       </div>
@@ -285,7 +284,7 @@
         isShowMsg: false,
         isShowName: false,
         isShowRule: false,
-        isCheck: true,
+        isCheck: false,
         isConfirm: false,
         isShowProtocol: false,
         receivedList: [],
