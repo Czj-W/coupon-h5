@@ -457,7 +457,7 @@
   }
   .detail-test {
     width: 10rem;
-    background: url("https://img-gewu.jifenone.com/images/coupon-h5-rujia.png");
+    background: url("https://img-gewu.jifenone.com/images/coupon-h5-bgs.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     padding-top: 6.053333rem;
